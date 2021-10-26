@@ -1,0 +1,241 @@
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+struct customer
+{
+  char name[50];
+  char add[50];
+  int room;
+    } cust[100];
+    
+   int leap(int y)
+   {
+   if(y%4==0)   
+   if(y%100)
+    return 1;
+    
+   if(y%400==0)
+    return 1;
+    
+    return 0;
+   }
+
+int dateCheck(int d, int m, int y)
+{
+    if(y<2021)
+    {
+    printf("\n Invalid date"); 
+    return 1;
+    }
+    
+    if((m>12)||(m<1))
+     {
+    printf("\n Invalid date"); 
+    return 1;
+    }
+    
+    if(d>28)
+    {
+    if((leap(y))&&(m==2))
+    {
+    if(d>29)
+    {
+    printf("\n Invalid date"); 
+    return 1;
+    }
+    }
+    else if(m==2)
+    {
+    printf("\n Invalid date");
+    return 1;
+    }
+    else if((!(m==2))&&(d>30))
+    {
+    if(m==4||6||9||11)
+      {
+     printf("\n Invalid date");
+     return 1;
+       }
+    if(d>31)
+      {
+       printf("\n Invalid date");
+     return 1; 
+        }
+      }
+    
+    }
+    return 0;
+ }
+
+int dayCalc(int d, int m, int y, int dd, int md, int yd)
+{
+    int tot, mc, feb=0;
+    switch(m)
+    {
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+    mc=31;
+    break;
+    
+    case 2:
+   if(leap(y))
+   mc=29;
+   else
+   mc=28;
+    break;
+    
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+    mc=30;
+    break;
+    }
+    
+    if((m<=2)&&(md>=3))
+    feb=2;
+    tot=(mc-d+dd)+30*(md-m-1)+360*(yd-y)-feb;        
+    
+    if (tot<0)
+    {
+           printf("You've selected invalid date, please enter another date");
+           return 0;
+    }
+          
+ return tot;
+}
+     
+int main()
+{
+    int i,c1,c2,d,dd,m,md,y,yd;
+    int days, ans, room=4;
+    int cost, price;
+    char ch;
+    char name[50];
+    char add[50];
+     int pwd,ENpwd;
+    
+printf("$*********************The Raj Hotel, Agra*****************$");
+
+
+
+printf("\n\n\nWe welcome you!");
+
+for(i=0;i<4;i++)
+{
+cust[i].room=i;
+strcpy(cust[i].add,"NULL");
+}
+
+strcpy(cust[0].name,"Godown");
+strcpy(cust[1].name,"Manager");
+strcpy(cust[2].name,"Crue1");
+strcpy(cust[3].name,"Crue2");
+
+
+for(i=0;i<100;)
+{
+    printf("\n to Login as admin press 2, otherwise, any key\n");
+if((ans=getch())=='2')
+goto administration;
+
+
+reset:
+printf("\nTo Book your room, Please enter your arrival day \n(in dd mm yyyy format):\n");
+
+scanf("%d %d %d",&d,&m,&y);
+c1=dateCheck(d,m,y);
+if(c1)
+{
+    c1=0;
+goto reset;
+}
+
+mini_reset:
+printf ("\nPlease enter your  departure day \n(in dd mm yyyy format):\n");
+scanf("%d %d %d",&dd,&md,&yd);
+c2=dateCheck(dd,md,yd);
+if(c2)
+{
+    c2=0;
+goto mini_reset;
+}
+
+days=dayCalc(d,m,y,dd,md,yd);
+if (days==0)
+goto reset;
+
+if(days<15)
+price=200;
+if(days>=15)
+price=190;
+if(days>20)
+price=185;
+if (days>50)
+price=175;
+
+cost =price*days;
+
+if (days>365)
+{
+printf("\n Sorry! We can't allot a room for more than a year.");
+goto reset;
+}
+printf("\n\n We're happy to tell you that you can reserve a room for %d days at cost of Rs. %d", days, cost);
+printf("\n\t\t to continue, press 1, \n\t\t to change dates, press 2 \n\t\t to exit, press 3");
+getch();
+
+if((ch=getch())=='2')
+goto reset;
+if(ch=='3')
+goto end;
+
+sameDTreset:
+printf("\n\nPlease enter your name\n");
+fgets(name,50,stdin);
+
+printf("\n\nPlease enter your address\n");
+fgets(add,50,stdin);
+
+printf("%s Ji, we've alloted you Room no %d\n and it'll cost you %d",name, room, cost);
+
+strcpy(cust[i+4].name,name);
+strcpy(cust[i+4].add,add);
+cust[i+4].room=room;
+
+printf("\n To book one more room on same date, press 1\n *Only for managers, \n\tTo view details of all customers and rooms, press 2\n");
+administration:
+if((ans=getch())=='1')
+{
+    i++;
+    room++;
+    goto sameDTreset;
+}
+pwd=123432;
+if(ans=='2')
+{
+	printf("Enter Six digit Pin: ");
+	scanf("%d", &ENpwd);
+	int match=pwd-ENpwd;
+	if(match==0)
+	{
+	     i=1;
+	     while(cust[i].room)
+	    {	        
+	    printf("\n\nRoom No %d \n\t\t  Customer Name: %s \n\t\t\t Add: %s",cust[i].room,cust[i].name,cust[i].add);  
+	    i++;
+	    }
+	 }
+	 if(match!=0)
+	 printf("\n \"Entered password is incorrect\" " );
+}
+	end:
+	printf ("\n\n See you later");
+	break;
+}
+}
